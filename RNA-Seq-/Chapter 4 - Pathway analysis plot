@@ -1,0 +1,13 @@
+library(ggplot2)
+
+data <- read.csv("data.csv")
+outFile <-("Wanted title name.pdf")
+EntitiesRatio <- data$Entities_ratio
+pValue <- data$pvalue
+BiologicalProcess <- data$ï..Pathway_Name
+pdf(outFile, height =5, width = 10)
+ggplot(data, aes(BiologicalProcess,EntitiesRatio)) + 
+  geom_point(aes(size = EntitiesRatio, colour = pValue)) + scale_colour_gradient(low = "blue") + coord_flip() + theme(axis.text = element_text(size = 9)) +
+  ggtitle("Name") +
+  theme(plot.title = element_text(size =8))
+dev.off()
