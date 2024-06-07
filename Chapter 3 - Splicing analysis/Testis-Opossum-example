@@ -1,0 +1,25 @@
+#Note: bam files collected from online repository 
+
+#!/bin/bash
+#SBATCH --nodes=1
+#SBATCH --job-name=Testis
+#SBATCH --output=./Testis.out
+##SBATCH -p biosoc
+for sample in *.bam
+do
+  FILE=$(basename $sample ".Male.sorted.bam")
+  echo -en $sample"\t"$FILE
+  samtools sort $sample -o ${FILE}_sorted_new.bam
+  samtools index -c ${FILE}_sorted_new.bam
+  samtools view ${FILE}_sorted_new.bam -b -o ${FILE}_Testis_ZF.bam 4:42453922-42521192
+  samtools index ${FILE}_Testis_ZF.bam
+  stringtie -o ${FILE}_Testis_ZF.gtf ${FILE}_Testis_ZF.bam
+  bamToBed -i ${FILE}_Testis_ZF.bam > ${FILE}_Testis_ZF.bed
+done
+
+ls *Testis_ZF.bam > bamfiles
+samtools merge Testis_ZF_merged.bam *Testis_ZF.bam
+samtools sort Testis_ZF_merged.bam -o Testis_ZF_merged_sorted_new.bam
+samtools index Testis_ZF_merged_sorted_new.bam
+stringtie -o merged_Testis_ZF.gtf Testis_ZF_merged_sorted_new.bam
+bamToBed -i Testis_ZF_merged_sorted_new.bam > Testis_merged_ZF.bed
