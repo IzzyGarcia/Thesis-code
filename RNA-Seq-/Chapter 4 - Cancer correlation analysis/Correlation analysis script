@@ -1,0 +1,49 @@
+---
+title: "correlation analysis"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+## Load libraries and options
+```{r message=FALSE, warning=FALSE, paged.print=FALSE}
+library(tidyverse)
+library(dplyr)
+library(Hmisc) #provides rcorr rather than the base correlation analysis - so we can get p-values
+```
+## Load and Preparation
+```{r}
+#cell line annotation
+cell.lines <- read.csv("./cell_line_data.csv")
+#CCLE gene expression data for correlation analysis
+expression.data <- read.csv("./expression_data.csv")
+```
+## find the DepMap_IDs for all the male cell lines
+## filter the expression data to just the male cell lines
+```{r}
+filtered.expression.data <- expression.data
+```
+
+#===========================
+## Set the gene of interest
+#===========================
+```{r}
+# drop the DepMap_ID column so everything is numeric
+correlation.data.df <- filtered.expression.data[-c(1)] 
+#find the column index to use to extract the data after the correlation analysis
+gene.index <- grep("^ZFY$", colnames(correlation.data.df))
+```
+## Do correlation for all 
+```{r}
+# this takes quite a while!
+correlation.resAll <- rcorr(as.matrix(correlation.data.df), type="pearson")
+#extract the columns for our gene of interest from (a) the results (b) the p-values and (c) make some p.adj
+correlation.results <- data.frame(correlation.resAll$r[,gene.index],correlation.resAll$P[,gene.index],p.adjust(correlation.resAll$P[,gene.index],method="BH"))
+```
+## Expression correlation data output
+```{r}
+#write out the data
+write.csv(correlation.results, "./correlations.csv", row.names=TRUE)
+```
