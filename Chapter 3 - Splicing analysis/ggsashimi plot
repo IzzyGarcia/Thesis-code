@@ -1,0 +1,3 @@
+ggsashimi.py -b FileWithListOfBamFiles -o OutputFile -M 10 -c  GenomeCoordinate -g GTFfile  
+
+example ~/software/ggsashimi/ggsashimi.py -b Bamfiles -o ZFX_Mouse_M10 -M 10 -c X:94078796-94098852 -g ../Mus_musculus.GRCm38.69.gtf
