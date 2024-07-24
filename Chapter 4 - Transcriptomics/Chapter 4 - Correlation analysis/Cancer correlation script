@@ -23,7 +23,8 @@ expression.data <- read.csv("./expression_data.csv")
 ## find the DepMap_IDs for all the male cell lines
 ## filter the expression data to just the male cell lines
 ```{r}
-filtered.expression.data <- expression.data
+filtered.results <- filter(cell.lines, sex == "Male")
+filtered.expression.data <- filter(expression.data, DepMap_ID %in% filtered.results$DepMap_ID)
 ```
 
 #===========================
